@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import {Picker} from '@react-native-picker/picker';
-import { AddPositionNameTitle } from "./titles/addPositionNameTitle";
-import { addPosition, getAllPositions, getPositionNamePosition } from "../../../requests/MainTabRequests/SettingsRequests/Position";
-import { PositionItem, PositionItemFull } from "./items/PositionItem";
-import { getScoupesWithAllData } from "../../../requests/MainTabRequests/SettingsRequests/Scoupe";
+import { AddPositionNameTitle } from "../titles/addPositionNameTitle";
+import { addPosition, getAllPositions, getPositionNamePosition } from "../../../../requests/MainTabRequests/SettingsRequests/Position";
+import { PositionItem, PositionItemFull } from "../items/PositionItem";
+import { getScoupesWithAllData } from "../../../../requests/MainTabRequests/SettingsRequests/Scoupe";
+import { produceWithPatches } from "immer";
 
 const styles = StyleSheet.create({
     container: {
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
       },
   });
 
-export function AddPositionScreen()
+export function AddPositionScreen(props:any)
 {
     const createOneButtonAlert = () =>
             Alert.alert(
@@ -208,13 +209,10 @@ export function AddPositionScreen()
         catch { return []}
     }
 
-    console.log(AllPositionsArray)
-
-    return(
-
-        <View>
-            <AddPositionNameTitle />
-        <View style= {styles.container}>
+    function AndroidView()
+    {
+        return(
+            <View style= {styles.container}>
 
             <View style ={{marginBottom: 20,height: 50, width: "100%", justifyContent: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor:"#e5f2dc"}}>
             <Picker
@@ -281,7 +279,74 @@ export function AddPositionScreen()
             <FlatList data={PositionArray} renderItem = {renderItem} extraData={selectedPositionName} keyExtractor={item => item.ID}/>
 
         </View>
-        </View>
+        )
+    }
 
+    function iOSPickerScoupe(Scoupe: string, setScoupe: any, ArrayScoupe: any)
+    {
+        return(
+        <Picker
+        style={{ height: 50, width: "90%", opacity: 0.65, alignSelf: 'center'}}
+        selectedValue={Scoupe}
+        onValueChange={(itemValue, itemIndex) =>{
+            setScoupe(itemValue);
+        }
+        }>
+
+        {
+            ArrayScoupe.map((item: any, index: any) => {return (<Picker.Item label={item.ScoupeName} value={item.ScoupeName} key={index}/>)})
+        }
+
+        </Picker>
+        )
+
+    }
+
+    function iOSView()
+    {
+        return(
+                <View style= {styles.container}>
+
+                <View style ={{marginBottom: 20,height: 50, width: "100%", justifyContent: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor:"#e5f2dc"}}>
+                <TouchableOpacity onPress={props.navigation.navigate('IOSFilter', {selectedScoupe, setSelectetedScoupe, ScoupeArray})}>
+                <Text style={{opacity:0.75, fontWeight: 'bold'}}>{selectedScoupe}</Text>
+                </TouchableOpacity>
+                </View>
+
+                <View style ={{marginBottom: 20,height: 50, width: "100%", justifyContent: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor:"#e5f2dc"}}>
+                <Text>{selectedScoupe}</Text>
+                </View>
+
+                <View style ={{marginBottom: 20,height: 50, width: "100%", justifyContent: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor:"#e5f2dc"}}>
+                <Text>{selectedScoupe}</Text>
+                </View>
+                
+
+                <TextInput value = {PositionCode} onChangeText={setPositionCode} textAlign= 'center' placeholder='Код должности' maxLength={32} style={styles.input}/>
+
+                <TouchableOpacity style = {{marginBottom: 20}} onPress={async ()=>{
+                    addPositionReq()
+                    callbackPosition();
+                    setPositionCode('');
+                }}>
+                    <Text style = {styles.text}>Добавить</Text>
+                </TouchableOpacity>
+
+                <FlatList data={PositionArray} renderItem = {renderItem} extraData={selectedPositionName} keyExtractor={item => item.ID}/>
+
+            </View>
+        )
+    }
+
+    function OSView()
+    {
+        return Platform.OS==='android'?AndroidView():iOSView()
+    }
+
+    return(
+        <View>
+            <AddPositionNameTitle/>
+            <OSView/>
+        </View>
     )
 }

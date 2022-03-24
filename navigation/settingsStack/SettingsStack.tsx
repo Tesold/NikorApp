@@ -6,7 +6,7 @@ import { SettingsScreen } from "../../src/views/MainViews/SettingsViews/Settings
 import { AddScoupeScreen } from "../../src/views/MainViews/SettingsViews/ScoupeView";
 import { AddDepartmentScreen } from "../../src/views/MainViews/SettingsViews/DepartmentView";
 import { AddPositionNameScreen } from "../../src/views/MainViews/SettingsViews/PositionNameView";
-import { AddPositionScreen } from "../../src/views/MainViews/SettingsViews/PositionView";
+import { AddPositionScreen } from "../../src/views/MainViews/SettingsViews/Position/PositionView";
 import { View } from "react-native";
 
 const Stack = createNativeStackNavigator();
