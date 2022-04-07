@@ -8,6 +8,11 @@ const itemWidth = (Dimensions.get('window').width)
 export function LoginScreen(props:any)
 {
 
+  function callback()
+  {
+    props.navigation.navigate('Registration')
+  }
+
   return(
     
     <KeyboardAvoidingView keyboardVerticalOffset={-40} contentContainerStyle={styles.container} behavior={Platform.OS==='ios'?'padding':'height'} style= {styles.container}>
@@ -21,7 +26,7 @@ export function LoginScreen(props:any)
           require('C:/Users/Tesold/Documents/JS/NikorApp/assets/images/logoW.png')
         }
         />
-        <LoginBox />
+        <LoginBox callback={callback}/>
         <StatusBar style="auto" />
         
       </KeyboardAvoidingView>

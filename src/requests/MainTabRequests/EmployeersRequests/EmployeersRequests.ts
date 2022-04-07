@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAccessToken } from "../../../store/authToken";
+import { getAccessToken, getUser } from "../../../store/authToken";
 import { refreshToken } from "../../authRequests";
 import {Config} from '../../config'
 
@@ -25,7 +25,9 @@ export async function getEmployeers() {
 
   export async function getEmployeersReq(access_token: string) {
 
-      const response = await axiosInstance.post('/api/employeers',{}, {headers: { 
+      const user = await getUser();
+      console.log(user);
+      const response = await axiosInstance.post('/api/get/employees',{Nickname: user.Nickname, ScoupeID: user?.Scoupe?.ID}, {headers: { 
         "Content-Type": "application/json",
         'Authorization': "Bearer "+access_token,
       }})

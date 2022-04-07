@@ -58,8 +58,8 @@ export function TitleView(props:any)
             
 
             <View style={styles.elements}>
-            <Text style={{textAlign:'center', color: 'white', fontWeight: 'bold'}}>{user.LastName} {user.FirstName} {user.MiddleName}</Text>
-            <Text style={{textAlign:'center', color: 'white'}}>{user.PositionName}</Text>
+            <Text style={{textAlign:'center', color: 'white', fontWeight: 'bold'}}>{user?.LastName} {user?.FirstName} {user?.MiddleName}</Text>
+            <Text style={{textAlign:'center', color: 'white'}}>{user?.PositionName}</Text>
             </View>
 
             <Image

@@ -8,6 +8,7 @@ import { SettingsScreen } from '../src/views/MainViews/SettingsViews/SettingsVie
 import { StatisticsScreen } from '../src/views/MainViews/StatisticsViews/StatisticsView';
 import { TasksScreen } from '../src/views/MainViews/TasksViews/TasksView'
 import { TitleView } from '../src/views/MainViews/Title/TitleView';
+import { EmployeesStackNavigator } from './employeeStack/EmployeesStack';
 import { SettingsStackNavigator } from './settingsStack/SettingsStack';
 import { CreateIconView } from './tabBarIconsViews/CreateIconView';
 import { EmployeeIconView } from './tabBarIconsViews/EmployeeIconView';
@@ -33,11 +34,11 @@ return(
           <View style={{backgroundColor: '#77A75C'}}>
           </View>
         
-        <TitleView/>
+        <TitleView />
 
       <Tabs.Navigator screenOptions={{tabBarShowLabel: false, headerShown: false, tabBarStyle: { backgroundColor: '#77A75C'}, tabBarInactiveTintColor: "white", tabBarActiveTintColor: "black", tabBarActiveBackgroundColor: '#BFE4A9'}}>
         <Tabs.Screen options={{tabBarIcon: (props)=>(<TasksIconView/>)}} name="Задачи" component={TasksScreen} />
-        <Tabs.Screen options={{tabBarIcon: (props)=>(<EmployeeIconView/>)}} name="Сотрудники" component={EmployeesScreen} />
+        <Tabs.Screen options={{tabBarIcon: (props)=>(<EmployeeIconView/>)}} name="Сотрудники" component={EmployeesStackNavigator} />
         <Tabs.Screen options={{tabBarIcon: (props)=>(<CreateIconView/>)}} name="Создать" component={AddTaskScreen} />
         <Tabs.Screen options={{tabBarIcon: (props)=>(<StatisticIconView/>)}} name="Статистика" component={StatisticsScreen} />
         <Tabs.Screen options={{tabBarIcon: (props)=>(<SettingsIconView/>)}} name="Настройки" component={SettingsStackNavigator} />

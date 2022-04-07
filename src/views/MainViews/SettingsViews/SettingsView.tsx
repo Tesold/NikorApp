@@ -42,7 +42,7 @@ export function SettingsScreen (props:any)
             <TouchableOpacity 
               style = {styles.button}
               onPress={() =>
-              props.navigation.navigate('Registration')
+              props.navigation.navigate('Code')
             }>
               <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Добавить сотрудника</Text>
             </TouchableOpacity>

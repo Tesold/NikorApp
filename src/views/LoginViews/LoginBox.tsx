@@ -3,11 +3,12 @@ import { Dimensions, StyleSheet, Text, View, TextInput, TouchableOpacity, Button
 import { useDispatch } from 'react-redux';
 import { LogIn, refreshToken } from '../../requests/authRequests';
 import { setLogIn } from '../../../redux/actions';
+import { clearAllListeners } from '@reduxjs/toolkit';
 
 
 const itemHeight = (Dimensions.get('window').height)
 
-export function LoginBox(props:any)
+export function LoginBox(callback:any)
 {
 
     const [Username, setUsername] = useState('');
@@ -51,6 +52,7 @@ export function LoginBox(props:any)
         const res = await refreshToken();
         if(res.access_token)
         dispatch(setLogIn())
+        return ()=>clearAllListeners()
         }
         catch{}
     }, [mount])
@@ -65,6 +67,9 @@ export function LoginBox(props:any)
             <TouchableOpacity onPress={check}>
             <Text style = {styles.text}>Войти</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={()=>callback.callback()}>
+            <Text style = {styles.text}>Регистрация</Text>
+            </TouchableOpacity>
 
         </View>
             )
@@ -74,7 +79,7 @@ const styles = StyleSheet.create({
     container: {
         
       width:'100%',
-      height: itemHeight*0.2,
+      height: itemHeight*0.25,
       backgroundColor: '#BFE4A9',
       marginVertical: 10,
       alignItems: 'center',

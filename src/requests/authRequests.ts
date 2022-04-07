@@ -75,40 +75,59 @@ export async function LogIn(Nickname:string, Password:string)
       return {status:response.status, access_token: ''};
 }
 
-export async function Registration(userData:any)
+export async function RegistrationReq(user:any, Code:any)
 {
     const regex = new RegExp('/', 'gi');
 
     const Salt = await genSalt();
     const PasswordHash = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
-      userData.Password+Salt
+      user.Password+Salt
     );
     
-    delete userData.Password;
-    userData.Birthday = userData.Birthday.replace(regex, '.');
+    delete user.Password;
+    user.Birthday = user.Birthday.replace(regex, '.');
+    const splitedDate = user.Birthday.split('.');
+    user.Birthday = splitedDate[1]+'.'+splitedDate[0]+'.'+splitedDate[2];
+    user.PasswordHash=PasswordHash;
+    user.Salt=Salt;
 
-    let access_token = await getAccessToken();
+    console.log(user.Birthday)
 
-    axiosInstance.post('users/registration', {...userData, PasswordHash, Salt},
+    const response = await axiosInstance.post('api/create/user', {user},
       {headers: { 
         "Content-Type": "application/json",
-        Authorization: "Bearer "+access_token,
-      }
-    }).then(res => {
-      console.log(res);
-      console.log(res.data)
-  }).catch(async error => {
-    access_token = (await refreshToken()).access_token;
-    
-    const response = await axiosInstance.post('users/registration', {...userData, PasswordHash, Salt},
-      {headers: { 
-        "Content-Type": "application/json",
-        Authorization: "Bearer "+access_token,
-      }
-    })
-  });  
+        Authorization: "Bearer "+user.Email+" "+Code,
+        }
+      });
+
+      return response;
 }
 
-const toHexString = (bytes:Uint8Array) =>
-  bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+export async function Registration(user:any, Code:any) {
+  try{ return (await RegistrationReq(user, Code)).status}
+  catch{console.log("Не удалось зарегистрировать!"); return 501;}
+
+}
+
+export async function getCode(Email: any) {
+  try{
+    console.log(Email)
+    const access_token = await getAccessToken();
+    const response = await getCodeReq(access_token, Email);
+    return response;
+  }
+  catch{
+    return (await getCodeReq((await refreshToken()).access_token, Email)).Code
+  }
+}
+
+export async function getCodeReq(Token:any, Email:any) {
+
+    const response = await axiosInstance.post('/api/get/code',{Email}, {headers: { 
+      "Content-Type": "application/json",
+      'Authorization': "Bearer "+Token,
+    }})
+
+    return response.data
+}

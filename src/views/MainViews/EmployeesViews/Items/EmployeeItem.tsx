@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, TouchableOpacityBase, View } from "react-native";
 
 const itemHeight = (Dimensions.get('window').height);
 const itemWidth = (Dimensions.get('window').width);
@@ -11,7 +11,7 @@ const styles = StyleSheet.create(
             paddingVertical: 5,
             paddingHorizontal: 5,
             borderRadius: 10,
-            flexDirection: "row",
+            //flexDirection: "row",
             height: itemHeight*0.125,
             width: itemWidth*0.95,
             backgroundColor: '#F1F1F1',
@@ -37,16 +37,16 @@ const styles = StyleSheet.create(
     }
 )
 
-export function EmployeeItem({Employeer}:any)
+export function EmployeeItem({Employee}:any)
 {
-    const birthday = new Date(Employeer.Birthday);
+    const birthday = new Date(Employee.Birthday);
 
     const birthdayView = () => {return(
         <Text style = {{fontSize: 10}}>{birthday.getDate()}.{birthday.getMonth()}.{birthday.getFullYear()}</Text>
     )}
 
     return(
-            <View style={{...styles.container}}>
+            <View style={{...styles.container, flexDirection: 'row'}}>
                 <Image
                     style={styles.logo}
                     resizeMode='contain'
@@ -55,11 +55,11 @@ export function EmployeeItem({Employeer}:any)
                     }
                     />
                     <View style={styles.data}>
-                        <Text style={{opacity: 0.65, fontSize:16, fontWeight: 'bold'}}>{Employeer.LastName} {Employeer.FirstName} {Employeer.MiddleName}</Text>
-                        <Text>{Employeer.Position||"Нет должности"}</Text>
+                        <Text style={{opacity: 0.65, fontSize:16, fontWeight: 'bold'}}>{Employee.LastName} {Employee.FirstName} {Employee.MiddleName}</Text>
+                        <Text>{Employee.Position||"Нет должности"}</Text>
                         <View style= {{justifyContent: 'center', alignContent: 'center'}}>
                             <Text style = {{textAlign:'center' ,opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>8-909-954-39-07</Text>
-                            <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>{Employeer.Email}</Text>
+                            <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>{Employee.Email}</Text>
                         </View>
                     </View>
                     
@@ -67,11 +67,11 @@ export function EmployeeItem({Employeer}:any)
     )
 }
 
-export function EmployeeItemFull({Employeer}:any)
+export function EmployeeItemFull({Employee, OpenCardCall}:any)
 {
 
-    const dataView = () => {return(
-        <View style = {{flex: 0.8, flexDirection: 'row', width: '90%'}}>
+    function DataView(){return(
+        <View style = {{flex: 0.8, flexDirection: 'row', width: '90%', alignSelf: 'center', marginVertical: 5, justifyContent: 'space-around'}}>
             <View style = {{flex: 3, justifyContent: 'space-around', alignContent: "flex-start"}}>
                 <Text><Text style = {{ fontSize: 10, fontWeight: 'bold', color: 'green' }}>Выполнено:</Text> </Text>
                 <Text><Text style = {{ fontSize: 10, fontWeight: 'bold', color: 'red'}}>Провалено:</Text> </Text>      
@@ -84,7 +84,8 @@ export function EmployeeItemFull({Employeer}:any)
     )}
 
     return(
-        <View style={{...styles.container, backgroundColor:'#BFE4A9', height: itemHeight*0.17}}>
+        <View style={{...styles.container, backgroundColor:'#BFE4A9', height: itemHeight*0.25}}>
+        <View style={{flexDirection: 'row'}}>
             <Image
                 style={styles.logo}
                 resizeMode='contain'
@@ -93,15 +94,23 @@ export function EmployeeItemFull({Employeer}:any)
                 }
                 />
                 <View style={styles.data}>
-                    <Text style={{opacity: 0.65, fontSize:16, fontWeight: 'bold'}}>{Employeer.LastName} {Employeer.FirstName} {Employeer.MiddleName}</Text>
-                    <Text>{Employeer.Position||"Нет должности"}</Text>
+                    <Text style={{opacity: 0.65, fontSize:16, fontWeight: 'bold'}}>{Employee.LastName} {Employee.FirstName} {Employee.MiddleName}</Text>
+                    <Text>{Employee.Position||"Нет должности"}</Text>
                     <View style= {{justifyContent: 'flex-end', alignContent: 'flex-end'}}>
                         <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>8-909-954-39-07</Text>
-                        <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>verik@nikor-n.ru</Text>
+                        <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>{Employee.Email}</Text>
                     </View>
-                    {dataView()}
-                </View>
-                
+                </View> 
+        </View>
+
+        <View>
+        
+        </View>
+        <DataView/>
+        <TouchableOpacity onPress={()=>OpenCardCall(Employee)} style={{justifyContent: 'center', flexDirection: 'column', backgroundColor: '#F1F1F1', borderRadius: 10, width: '30%', alignSelf:'center', height: 25, marginVertical: 5}}>
+                    <Text style={{alignSelf: 'center', paddingVertical: 0}}>Открыть</Text>
+        </TouchableOpacity>
+
         </View>
 )
 }

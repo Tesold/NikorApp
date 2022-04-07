@@ -1,16 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
-import { addScoupeName, getScoupes } from "../../../requests/MainTabRequests/SettingsRequests/Scoupe";
-import { ScoupeItem, ScoupeItemFull } from "./items/ScoupeItem";
-import { AddScoupeTitle } from "./titles/addScoupeTitle";
+import { addScoupeName, getScoupes } from "../../../../requests/MainTabRequests/SettingsRequests/Scoupe";
+import { ScoupeItem, ScoupeItemFull } from "./ScoupeItem";
+import { AddScoupeTitle } from "../titles/addScoupeTitle";
 
 const styles = StyleSheet.create({
     container: {
       width:'100%',
       height:"100%",
-      //',//itemHeight*0.75,
       backgroundColor: '#F7FFF2',
       marginVertical: 0,
       alignItems: 'center',
@@ -36,11 +33,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize:20,
         fontFamily: "OpenSans",
-        //autoComplete: 'password'
     },
     datePickerStyle: {
         width: '60%',
       },
+      flatListStyle:{
+        flex:10, width: "100%", justifyContent: 'center', backgroundColor: "#E5F4DC", borderRadius: 10
+      }
   });
 
 export function AddScoupeScreen(props:any)
@@ -70,6 +69,8 @@ export function AddScoupeScreen(props:any)
     const callback = async () =>{
         const response = await getScoupes();
         setScoupeArray(response.map((_value: any)=>_value));
+        console.log("response")
+        console.log(response)
     }
 
     const [ScoupeArray, setScoupeArray] = useState(new Array);
@@ -95,8 +96,11 @@ export function AddScoupeScreen(props:any)
         return (<TouchableOpacity onPress={()=>setSelectedScoupe(emp.index)}><ScoupeItem Scoupe={emp.item} /></TouchableOpacity>)
     };
 
+    console.log(props)
 
+    let ref:any;
 
+    
     
     return(
         
@@ -105,15 +109,15 @@ export function AddScoupeScreen(props:any)
 
             <View style={{width: '100%' , alignItems: 'center', marginVertical: 20}}>
             
-            <TextInput value = {ScoupeName} onChangeText={setScoupeName} textAlign= 'center' placeholder='Название структуры' maxLength={32} style={styles.input}/>
+            <TextInput ref={(reff)=>{ref=reff}} value = {ScoupeName} onChangeText={setScoupeName} textAlign= 'center' placeholder='Название структуры' maxLength={32} style={styles.input}/>
 
-            <TouchableOpacity onPress={()=>addScoupeNameReq()}>
+            <TouchableOpacity onPress={()=>{addScoupeNameReq(); setScoupeName(''); TextInput.State.blurTextInput(ref);}}>
                 <Text style = {styles.text}>Добавить</Text>
             </TouchableOpacity>
             </View>
 
-            <View style={{flex:1}}>
-            <FlatList style={{flex:1}} data={ScoupeArray} renderItem = {renderItem} extraData={selectedScoupe} keyExtractor={item => item.ID}/>
+            <View style={{flex:1, width: '100%'}}>
+            <FlatList style={{flex:1}} data={ScoupeArray} renderItem = {renderItem} extraData={ScoupeArray} keyExtractor={item => item.ID}/>
             </View>
            
         </View>

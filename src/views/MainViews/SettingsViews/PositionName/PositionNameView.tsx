@@ -1,19 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Alert, FlatList, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import {Picker} from '@react-native-picker/picker';
-import { AddPositionNameTitle } from "../titles/addPositionNameTitle";
-import { addPosition, getAllPositions, getPositionNamePosition } from "../../../../requests/MainTabRequests/SettingsRequests/Position";
-import { PositionItem, PositionItemFull } from "./PositionItem";
+import React, { useMemo, useState } from "react";
+import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { getScoupesWithAllData } from "../../../../requests/MainTabRequests/SettingsRequests/Scoupe";
-import { produceWithPatches } from "immer";
 import { ScoupeItem } from "../Scoupe/ScoupeItem";
 import { DepartmentItem } from "../Department/DepartmentItem";
-import { PositionNameItem } from "../PositionName/PositionNameItem";
+import { addPositionName } from "../../../../requests/MainTabRequests/SettingsRequests/PositionName";
+import { PositionNameItem, PositionNameItemFull } from "./PositionNameItem";
 
 const styles = StyleSheet.create({
     container: {
       width:'100%',
-      height: '100%',//itemHeight*0.75,
+      height: '100%',
       backgroundColor: '#F7FFF2',
       marginVertical: 0,
       alignItems: 'center',
@@ -33,6 +29,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         fontSize:16,
         fontFamily: "OpenSans",
+        alignSelf: 'center'
     },
     text:
     {
@@ -40,6 +37,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize:20,
         fontFamily: "OpenSans",
+        alignSelf: 'center'
         //autoComplete: 'password'
     },
     datePickerStyle: {
@@ -72,7 +70,6 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: "center",
         shadowColor: "black",
-
         shadowOpacity: 1,
         shadowRadius: 500,
         elevation: 5
@@ -82,11 +79,11 @@ const styles = StyleSheet.create({
       }
   });
 
-export function AddPositionScreen(props:any)
+export function AddPositionNameScreen(props:any)
 {
     const createOneButtonAlert = () =>
             Alert.alert(
-                "Должность",
+                "Наименование должности",
                 "Успешно!",
                 [
                 { text: "OK", onPress: () => console.log("Успешно создано!") }
@@ -95,25 +92,24 @@ export function AddPositionScreen(props:any)
 
     const mount = 1;
 
-    const [PositionCode, setPositionCode] = useState(''); 
+    const [PositionName, setPositionName] = useState(''); 
 
     const [ScoupeArray, setScoupeArray] = useState(new Array);
-    const [AllPositionsArray, setAllPositionsArray] = useState(new Array);
+    const [PositionNamesArray, setPositionNamesArray] = useState(new Array);
 
     const [selectedScoupeObj, setSelectedScoupeObj] = useState(Object);
     const [selectedDepartmentObj, setSelectedDepartmentObj] = useState(Object);
     const [selectedPositionNameObj, setSelectedPositionNameObj] = useState(Object);
 
-    const [selectedPosition, setSelectedPosition] = useState(null);
+    const [selectedPositionName, setSelectedPositionName] = useState(null);
 
     const [modalScoupeVisible, setModalScoupeVisible] = useState(false);
     const [modalDepartmentVisible, setModalDepartmentVisible] = useState(false);
-    const [modalPositionNameVisible, setModalPositionNameVisible] = useState(false);
 
-    async function addPositionReq(){
+    async function addPositionNameReq(){
         try{
         console.log(selectedPositionNameObj.PositionName);
-        const status = await addPosition(selectedPositionNameObj.ID, PositionCode);
+        const status = await addPositionName(selectedDepartmentObj.ID, PositionName);
 
         if(status===201)
         createOneButtonAlert();
@@ -129,21 +125,21 @@ export function AddPositionScreen(props:any)
         }
     }
 
-    async function callbackPosition(){
+    async function callbackPositionName(){
         try{
-        const response = await getAllPositions();
-        setAllPositionsArray(response)
-        console.log(response)
-        //setPositionArray(getCurrentPositionArray());
+        const response = await getScoupesWithAllData();
+        setScoupeArray(response)
+        setSelectedScoupeObj(response.find((item:any)=>item.ID===selectedScoupeObj.ID));
+        setSelectedDepartmentObj(response.find((item:any)=>item.ID===selectedScoupeObj.ID).DepartmentID.find((item:any)=>selectedDepartmentObj.ID===item.ID));
         }
-        catch{console.log("cant get pos")}
+        catch{}
     }
 
     function renderItem(emp:any){
-        if(emp.index === selectedPosition)
-        return (<TouchableOpacity onPress={()=>setSelectedPosition(null)}><PositionItemFull Position={emp.item} callback = {callbackPosition}/></TouchableOpacity>)
+        if(emp.index === selectedPositionName)
+        return (<TouchableOpacity onPress={()=>setSelectedPositionName(null)}><PositionNameItemFull PositionName={emp.item} callback = {callbackPositionName}/></TouchableOpacity>)
         
-        return (<TouchableOpacity onPress={()=>setSelectedPosition(emp.index)}><PositionItem Position={emp.item}  /></TouchableOpacity>)
+        return (<TouchableOpacity onPress={()=>setSelectedPositionName(emp.index)}><PositionNameItem PositionName={emp.item}  /></TouchableOpacity>)
     };
 
     useMemo(async () => {
@@ -151,34 +147,14 @@ export function AddPositionScreen(props:any)
         try{
             const response = await getScoupesWithAllData();
             setScoupeArray(response.map((_value: any)=>_value));
-            callbackPosition();
             setSelectedScoupeObj({ScoupeName: "Выберите структуру..."});
             
             setSelectedDepartmentObj({DepartmentName: "Выберите отдел..."});
-
-            setSelectedPositionNameObj({PositionName: "Выберите наименование должности..."});
         }
         catch{console.log("Cant get scoupes")}
     }, [mount]);
 
-    function getCurrentPositionArray(){
-        try{
-        const pos = AllPositionsArray.filter(position=>{if(position.PositionNameID===selectedPositionNameObj.ID) return position; return;});
-
-
-        pos.slice(undefined)
-        console.log(pos.length)
-        console.log(pos)
-
-        if(pos)
-        return pos;
-
-        return null;
-        }
-        catch { return undefined}
-    }
-
-    let ref:any;
+    let ref: any;
 
     return(
         <View>
@@ -199,13 +175,10 @@ export function AddPositionScreen(props:any)
                 renderItem = {(emp)=><TouchableOpacity onPress={()=>{
 
                                                         setSelectedScoupeObj(emp.item);
+
                                                         if(emp.item.DepartmentID)
-                                                        {
                                                         setSelectedDepartmentObj(emp.item.DepartmentID[0]);
-                                                        if(emp.item.DepartmentID[0]?.PositionName)
-                                                        setSelectedPositionNameObj(emp.item.DepartmentID[0].PositionName[0]);
-                                                        else setSelectedPositionNameObj({})
-                                                        }
+                                                        
                                                         setModalScoupeVisible(false);
                                                         }}>
                                                             
@@ -242,8 +215,6 @@ export function AddPositionScreen(props:any)
                 renderItem = {(emp)=><TouchableOpacity onPress={()=>{
 
                                                         setSelectedDepartmentObj(emp.item);
-                                                        if(emp.item.PositionName)
-                                                        setSelectedPositionNameObj(emp.item.PositionName[0]);
                                                         setModalDepartmentVisible(false);
                                                         }}>
 
@@ -263,45 +234,7 @@ export function AddPositionScreen(props:any)
                 </View>
             </Modal>
 
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalPositionNameVisible}
-                onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-                setModalDepartmentVisible(!modalDepartmentVisible);
-                }}
-            >
-                <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                <View style={styles.flatListStyle}>
-                <FlatList data={selectedDepartmentObj?.PositionName}
-                renderItem = {(emp)=><TouchableOpacity onPress={()=>{
-
-                                                        setSelectedPositionNameObj(emp.item);
-                                                        setModalPositionNameVisible(false);
-                                                        }}>
-
-                        <PositionNameItem PositionName={emp.item}/>
-                        </TouchableOpacity>} 
-
-                keyExtractor={item => item.ID}/>
-                </View>
-                <View style={{flex:1}}>
-                <TouchableOpacity onPress={()=>{setModalPositionNameVisible(false)}}>
-                <View style={{height:60, width: 120, alignSelf: 'center', marginTop: 10}}>
-                    <Text style={{opacity:0.75, fontWeight: 'bold', fontSize: 20, alignSelf: 'center', color: 'tomato'}}>Закрыть</Text>
-                    </View>
-                </TouchableOpacity>
-                </View>
-                </View>
-                </View>
-            </Modal>
-
             <View style= {styles.container}>
-
-            
-
             
             <View style={{width: '100%', justifyContent:'flex-start'}}>
             <TouchableOpacity onPress={()=>setModalScoupeVisible(true)}>
@@ -315,30 +248,24 @@ export function AddPositionScreen(props:any)
             <Text style={{opacity:0.65, fontWeight: 'bold', alignSelf: 'center'}}>{selectedDepartmentObj?.DepartmentName}</Text>
             </View>
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={()=>setModalPositionNameVisible(true)}>
-            <View style ={{marginBottom: 20,height: 50, width: "100%", justifyContent: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor:"#e5f2dc"}}>
-            <Text style={{opacity:0.65, fontWeight: 'bold', alignSelf: 'center'}}>{selectedPositionNameObj?.PositionName}</Text>
-            </View>
-            </TouchableOpacity>
-            </View>
+             
+            <TextInput ref={(reff)=>ref=reff} value = {PositionName} onChangeText={setPositionName} textAlign= 'center' placeholder='Имя должности' maxLength={32} style={styles.input}/>
             
-            
-            <TextInput ref={reff=>ref=reff} value = {PositionCode} onChangeText={setPositionCode} textAlign= 'center' placeholder='Код должности' maxLength={32} style={styles.input}/>
-            
-            <TouchableOpacity style = {{marginBottom: 20}} onPress={()=>{
-                addPositionReq()
-                callbackPosition();
-                setPositionCode('');
+            <TouchableOpacity style = {{marginBottom: 20}} onPress={async ()=>{
+                addPositionNameReq()
+                callbackPositionName();
+                setPositionName('');
                 TextInput.State.blurTextInput(ref);
             }}>
                 <Text style = {styles.text}>Добавить</Text>
             </TouchableOpacity>
             
             <View style = {{width: '100%'}}>
-            <FlatList data={getCurrentPositionArray()} renderItem = {renderItem} keyExtractor={item => item?.ID}/>
+            <FlatList data={selectedDepartmentObj?.PositionName} renderItem = {renderItem} keyExtractor={item => item.ID}/>
             </View>
             </View>
+        </View>
+
         </View>
     )
 }
