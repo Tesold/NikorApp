@@ -131,3 +131,24 @@ export async function getCodeReq(Token:any, Email:any) {
 
     return response.data
 }
+
+export async function getScoupe() {
+  try{
+    const access_token = await getAccessToken();
+    const response = await getScoupeReq(access_token);
+    return response;
+  }
+  catch{
+    return (await getScoupeReq((await refreshToken()).access_token));
+  }
+}
+
+export async function getScoupeReq(Token:any) {
+
+  const response = await axiosInstance.post('/positions/get/scoupe',{}, {headers: { 
+    "Content-Type": "application/json",
+    'Authorization': "Bearer "+Token,
+  }})
+
+  return response.data
+}

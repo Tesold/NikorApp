@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAccessToken, getUser } from "../../../store/authToken";
+import { getAccessToken, getRefreshToken, getUser } from "../../../store/authToken";
 import { refreshToken } from "../../authRequests";
 import {Config} from '../../config'
 import { UserDto } from "../../dto/user.dto";
@@ -91,4 +91,41 @@ export async function getAllPositions() {
 
     return response.data
   }
+}
+
+export async function getFreePositions(){
+  try{
+    return getFreePositionsReq(await getAccessToken());
+  }
+  catch{
+    return getFreePositionsReq((await refreshToken()).access_token);
+  }
+}
+
+export async function getFreePositionsReq(Token:string){
+  const response = await axiosInstance.post('/positions/get/freepositions',{}, {headers: { 
+    "Content-Type": "application/json",
+    'Authorization': "Bearer "+Token,
+  }})
+
+  return response.data
+}
+
+export async function setEmployeeForPosition(EmployeeID: number, PositionID:number){
+
+  try{
+    setEmployeeForPositionReq(await getAccessToken(), EmployeeID, PositionID);
+  }
+  catch{
+    setEmployeeForPositionReq((await refreshToken()).access_token, EmployeeID, PositionID);
+  }
+}
+
+export async function setEmployeeForPositionReq(Token: string, EmployeeID: number, PositionID:number){
+  const response = await axiosInstance.post('/positions/set/employeeforposition',{EmployeeID, PositionID}, {headers: { 
+    "Content-Type": "application/json",
+    'Authorization': "Bearer "+Token,
+  }})
+
+  return response.data
 }
