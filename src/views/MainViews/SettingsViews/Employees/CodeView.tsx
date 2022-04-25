@@ -1,10 +1,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Dimensions, EmitterSubscription, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { TextInputMask } from 'react-native-masked-text'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { removeListener } from '@reduxjs/toolkit';
 import { getCode } from '../../../../requests/authRequests';
+import { Title } from '../titles/Title';
 
 
 const itemHeight = (Dimensions.get('window').height);
@@ -107,9 +106,11 @@ export function CodeScreen(props:any)
       console.log("Code: "+Code)
 
     return(
-        
+        <View style={{flex:1}}>
+        <Title goBack={props.navigation.goBack} name={"Добавить сотрудника"}/>
         <KeyboardAwareScrollView 
          scrollEnabled={true} contentContainerStyle={keyboardStyle} style={{flex:1, backgroundColor: '#BFE4A9'}} enableAutomaticScroll={true} enableOnAndroid = {true}>
+        
         <View style={{width: '100%'}}>
         <TextInput value = {Email} onChangeText={setEmail} autoFocus={false} placeholder='Email' textAlign= 'center' maxLength={32} style={styles.input}/>
         <TouchableOpacity onPress={getCodeButton}>
@@ -118,6 +119,7 @@ export function CodeScreen(props:any)
         <TextInput editable= {true} value = {Code} onChangeText={setCode} autoFocus={false} placeholder='Code' textAlign= 'center' maxLength={32} style={styles.input}/>
           </View>
         </KeyboardAwareScrollView>
+        </View>
        
             
         

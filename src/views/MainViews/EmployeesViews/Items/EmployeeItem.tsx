@@ -8,17 +8,19 @@ const styles = StyleSheet.create(
     {
         container:
         {
+            flex: 1,
             paddingVertical: 5,
             paddingHorizontal: 5,
             borderRadius: 10,
             //flexDirection: "row",
-            height: itemHeight*0.125,
-            width: itemWidth*0.95,
+            height: '60%',
+            width: '95%',
             backgroundColor: '#F1F1F1',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             alignContent: 'center',
             marginVertical: 10,
-            elevation: 5
+            elevation: 5,
+            alignSelf: 'center'
         },
         logo:{
             width: '90%',
@@ -29,7 +31,7 @@ const styles = StyleSheet.create(
           },
           data:
           {
-            flex: 4,
+                flex:2,
               alignItems: 'center',
               justifyContent: 'space-between'
               //justifyContent: 'center'
@@ -39,14 +41,9 @@ const styles = StyleSheet.create(
 
 export function EmployeeItem({Employee}:any)
 {
-    const birthday = new Date(Employee.Birthday);
-
-    const birthdayView = () => {return(
-        <Text style = {{fontSize: 10}}>{birthday.getDate()}.{birthday.getMonth()}.{birthday.getFullYear()}</Text>
-    )}
-
     return(
             <View style={{...styles.container, flexDirection: 'row'}}>
+                <View style={{flex:1}}>
                 <Image
                     style={styles.logo}
                     resizeMode='contain'
@@ -54,14 +51,15 @@ export function EmployeeItem({Employee}:any)
                     require('C:/Users/Tesold/Documents/JS/NikorApp/assets/images/logoW.png')
                     }
                     />
-                    <View style={styles.data}>
+                </View>
+                <View style={styles.data}>
                         <Text style={{opacity: 0.65, fontSize:16, fontWeight: 'bold'}}>{Employee.LastName} {Employee.FirstName} {Employee.MiddleName}</Text>
-                        <Text>{Employee.Position||"Нет должности"}</Text>
+                        <Text>{Employee?.Position?.PositionCode||"Нет должности"}</Text>
                         <View style= {{justifyContent: 'center', alignContent: 'center'}}>
                             <Text style = {{textAlign:'center' ,opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>8-909-954-39-07</Text>
                             <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>{Employee.Email}</Text>
                         </View>
-                    </View>
+                </View>
                     
             </View>
     )
@@ -95,7 +93,7 @@ export function EmployeeItemFull({Employee, OpenCardCall}:any)
                 />
                 <View style={styles.data}>
                     <Text style={{opacity: 0.65, fontSize:16, fontWeight: 'bold'}}>{Employee.LastName} {Employee.FirstName} {Employee.MiddleName}</Text>
-                    <Text>{Employee.Position||"Нет должности"}</Text>
+                    <Text>{Employee.Position?.PositionCode||"Нет должности"}</Text>
                     <View style= {{justifyContent: 'flex-end', alignContent: 'flex-end'}}>
                         <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>8-909-954-39-07</Text>
                         <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>{Employee.Email}</Text>
@@ -113,4 +111,58 @@ export function EmployeeItemFull({Employee, OpenCardCall}:any)
 
         </View>
 )
+}
+
+export function EmployeeItemFullForScoupe({Employee, deletecallback}:any)
+{
+
+    return(
+            <View style={{...styles.container, flexDirection: 'row', height: itemHeight*0.20}}>
+                <Image
+                    style={styles.logo}
+                    resizeMode='contain'
+                    source={
+                    require('C:/Users/Tesold/Documents/JS/NikorApp/assets/images/logoW.png')
+                    }
+                    />
+                    <View style={styles.data}>
+                        <Text style={{opacity: 0.65, fontSize:16, fontWeight: 'bold'}}>{Employee.LastName} {Employee.FirstName} {Employee.MiddleName}</Text>
+                        <Text>{Employee.Position||"Нет должности"}</Text>
+                        <View style= {{justifyContent: 'center', alignContent: 'center'}}>
+                            <Text style = {{textAlign:'center' ,opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>8-909-954-39-07</Text>
+                            <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>{Employee.Email}</Text>
+                        </View>
+                    </View>
+                    <TouchableOpacity onPress={()=>deletecallback(Employee.ID)} style={{alignSelf: 'center' ,width:'35%', backgroundColor: 'tomato', borderRadius: 5, justifyContent: 'center', alignContent: 'center'}}>
+                    <Text style = {{marginVertical: 2,marginHorizontal: 10,alignSelf: 'center' ,opacity:0.65, fontWeight: 'bold'}}>Удалить</Text>
+                    </TouchableOpacity>
+                    
+            </View>
+    )
+}
+
+export function EmployeeItemForScoupe({Employee}:any)
+{
+
+    return(
+            <View style={{...styles.container, flexDirection: 'row'}}>
+                <Image
+                    style={styles.logo}
+                    resizeMode='contain'
+                    source={
+                    require('C:/Users/Tesold/Documents/JS/NikorApp/assets/images/logoW.png')
+                    }
+                    />
+                    <View style={styles.data}>
+                        <Text style={{opacity: 0.65, fontSize:16, fontWeight: 'bold'}}>{Employee.LastName} {Employee.FirstName} {Employee.MiddleName}</Text>
+                        <Text>{Employee.Position||"Нет должности"}</Text>
+                        <View style= {{justifyContent: 'center', alignContent: 'center'}}>
+                            <Text style = {{textAlign:'center' ,opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>8-909-954-39-07</Text>
+                            <Text style = {{opacity: 0.65, fontSize: 12, fontWeight: 'bold'}}>{Employee.Email}</Text>
+                        </View>
+                    </View>
+                    
+            </View>
+    )
+                
 }

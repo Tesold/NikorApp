@@ -44,10 +44,14 @@ const styles = StyleSheet.create({
           <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
               <Text style={styles.text}>{route.params?.Employee.LastName} {route.params?.Employee.FirstName} {route.params?.Employee.MiddleName}</Text>
           </View>
+
+          <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+              <Text style={{flex:2, textAlign: 'center', opacity: 0.65, fontSize: 20, fontWeight: 'bold'}}>{route.params?.Employee?.Scoupe?.ScoupeName||"Не в структуре"}</Text>
+          </View>
           <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
               <View style={{flex:1}}></View>
               <TouchableOpacity style={{flex:3, flexDirection: 'row'}}>
-              <Text style={{flex:2, textAlign: 'center', opacity: 0.65, fontSize: 20, fontWeight: 'bold'}}>{route.params?.Employee?.Position||'Нет должности'}</Text>
+              <Text style={{flex:2, textAlign: 'center', opacity: 0.65, fontSize: 20, fontWeight: 'bold'}}>{route.params?.Employee?.Position?.PositionCode||'Нет должности'}</Text>
               
               <View style={{flex:1, justifyContent:'flex-start', alignContent: 'flex-start'}}>
               <Image

@@ -1,8 +1,8 @@
 import React, { useMemo, useRef, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { addScoupeName, getScoupes } from "../../../../requests/MainTabRequests/SettingsRequests/Scoupe";
+import { Title } from "../titles/Title";
 import { ScoupeItem, ScoupeItemFull } from "./ScoupeItem";
-import { AddScoupeTitle } from "../titles/addScoupeTitle";
 
 const styles = StyleSheet.create({
     container: {
@@ -96,16 +96,14 @@ export function AddScoupeScreen(props:any)
         return (<TouchableOpacity onPress={()=>setSelectedScoupe(emp.index)}><ScoupeItem Scoupe={emp.item} /></TouchableOpacity>)
     };
 
-    console.log(props)
-
     let ref:any;
 
-    
+    console.log(props.navigation);
     
     return(
         
         <View  style= {styles.container}>
-        <AddScoupeTitle />
+        <Title goBack={props.navigation.goBack} name = {"Структуры"}/>
 
             <View style={{width: '100%' , alignItems: 'center', marginVertical: 20}}>
             

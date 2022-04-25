@@ -42,9 +42,9 @@ export function SettingsScreen (props:any)
             <TouchableOpacity 
               style = {styles.button}
               onPress={() =>
-              props.navigation.navigate('Code')
+              props.navigation.navigate('EmployeeButtonStackNavigator')
             }>
-              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Добавить сотрудника</Text>
+              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Сотрудники</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -68,7 +68,7 @@ export function SettingsScreen (props:any)
               onPress={() =>
               props.navigation.navigate('AddPosition')
             }>
-              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Добавить должность</Text>
+              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Должности</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -76,7 +76,7 @@ export function SettingsScreen (props:any)
               onPress={() =>
               props.navigation.navigate('AddPositionName')
             }>
-              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Добавить наименование должности</Text>
+              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Наименования должностей</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -84,7 +84,7 @@ export function SettingsScreen (props:any)
               onPress={() =>
               props.navigation.navigate('AddDepartment')
             }>
-              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Добавить отдел</Text>
+              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Отделы</Text>
             </TouchableOpacity>
 
 
@@ -94,7 +94,7 @@ export function SettingsScreen (props:any)
               onPress={() =>
               props.navigation.navigate('AddScoupe')
             }>
-              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Добавить структуру</Text>
+              <Text style={{textAlign: 'center', fontWeight: 'bold', opacity: 0.7}}>Структуры</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 

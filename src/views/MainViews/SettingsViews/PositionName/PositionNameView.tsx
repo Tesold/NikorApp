@@ -5,6 +5,7 @@ import { ScoupeItem } from "../Scoupe/ScoupeItem";
 import { DepartmentItem } from "../Department/DepartmentItem";
 import { addPositionName } from "../../../../requests/MainTabRequests/SettingsRequests/PositionName";
 import { PositionNameItem, PositionNameItemFull } from "./PositionNameItem";
+import { Title } from "../titles/Title";
 
 const styles = StyleSheet.create({
     container: {
@@ -158,7 +159,7 @@ export function AddPositionNameScreen(props:any)
 
     return(
         <View>
-            
+            <Title goBack={props.navigation.goBack} name = {'Наименование должностей'}/>
             <Modal
                 animationType="fade"
                 transparent={true}

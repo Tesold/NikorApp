@@ -1,13 +1,10 @@
 import React, { useMemo, useState } from "react";
-import { Alert, Dimensions, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getScoupes } from "../../../../requests/MainTabRequests/SettingsRequests/Scoupe";
-import { addDepartment } from "../../../../requests/MainTabRequests/SettingsRequests/Department";
-import { DepartmentItem, DepartmentItemFull } from "./DepartmentItem";
 import { ScoupeItem } from "../Scoupe/ScoupeItem";
 import { Title } from "../titles/Title";
-
-const itemHeight = (Dimensions.get('window').height);
-const itemWidth = (Dimensions.get('window').width);
+import { EmployeeItem, EmployeeItemFullForScoupe } from "../../EmployeesViews/Items/EmployeeItem";
+import { deleteEmployeesScoupe, getEmployees, setScoupeForEmployee } from "../../../../requests/MainTabRequests/EmployeersRequests/EmployeesRequests";
 
 const styles = StyleSheet.create({
     container: {
@@ -85,74 +82,92 @@ const styles = StyleSheet.create({
   });
 
 
-export function AddDepartmentScreen(props:any)
+export function SetUsersForScoupeScreen(props:any)
 {
+    const deleteOneButtonAlert = () =>
+            Alert.alert(
+                "Сотрудник",
+                "Удален из подразделения!",
+                [
+                { text: "OK", onPress: () => console.log("Успешно удален!") }
+                ]
+            );
+
     const createOneButtonAlert = () =>
             Alert.alert(
-                "Подразделение",
-                "Успешно!",
+                "Сотрудник",
+                "Успешно добавлен!",
                 [
-                { text: "OK", onPress: () => console.log("Успешно создано!") }
+                { text: "OK", onPress: () => console.log("Успешно добавлен!") }
                 ]
             );
 
     const mount = 1;
 
-    const [DepartmentName, setDepartmentName] = useState(''); 
-
     const [ScoupeArray, setScoupeArray] = useState(new Array);
-    const [DepartmentsArray, setDepartmentsArray] = useState(new Array);
+    const [EmployeesArray, setEmployeesArray] = useState(new Array);
 
     const [selectedScoupeObj, setSelectedScoupeObj] = useState(Object);
-    const [selectedDepartmentObj, setSelectedDepartmentObj] = useState(Object);
+    const [selectedEmployee, setSelectedEmployee] = useState(Object);
 
-    const [selectedDepartment, setSelectedDepartment] = useState(null);
+
 
     const [modalScoupeVisible, setModalScoupeVisible] = useState(false);
+    const [modalEmployeesVisible, setModalEmployeesVisible] = useState(false);
 
 
-    async function addDepartmentReq(){
+
+    async function callback(){
         try{
-        console.log(selectedDepartmentObj.DepartmentName);
-        const status = await addDepartment(selectedScoupeObj.ID, DepartmentName);
+            const employeesResponse = await getEmployees();
+            setEmployeesArray(employeesResponse);
+        }
+        catch{console.log("Cant get employees")}
+    }
 
-        if(status===201)
-        createOneButtonAlert();
+    async function deletecallback(UserID:number)
+    {
+        try{
+            deleteEmployeesScoupe(UserID);
+            callback();
+            deleteOneButtonAlert();
         }
         catch{
             Alert.alert(
-                "Подразделение",
-                "Ошибка!",
+                "Сотрудник",
+                "Не удалось удалить!",
                 [
-                { text: "OK", onPress: () => console.log("Ошибка!") }
+                { text: "OK", onPress: () => console.log("Не удалось удалить!") }
                 ]
             );
         }
     }
 
-    async function callbackDepartment(){
-        try{
-        const response = await getScoupes();
-        setScoupeArray(response)
-        setDepartmentsArray(response.find((item:any)=>item.ID===selectedScoupeObj.ID).DepartmentID);
-        }
-        catch{}
-    }
-
     function renderItem(emp:any){
-        if(emp.index === selectedDepartment)
-        return (<TouchableOpacity onPress={()=>setSelectedDepartment(null)}><DepartmentItemFull Department={emp.item} callbackDepartment = {callbackDepartment}/></TouchableOpacity>)
+        if(emp?.item?.ID === selectedEmployee.ID)
+        return (<TouchableOpacity style={{alignSelf: 'center'}} onPress={()=>setSelectedEmployee({})}><EmployeeItemFullForScoupe Employee={emp.item} deletecallback = {deletecallback}/></TouchableOpacity>)
+       
+        return (<TouchableOpacity style={{alignSelf: 'center'}} onPress={()=>setSelectedEmployee(emp.item)}><EmployeeItem Employee={emp.item}/></TouchableOpacity>)
+
         
-        return (<TouchableOpacity onPress={()=>setSelectedDepartment(emp.index)}><DepartmentItem Department={emp.item}  /></TouchableOpacity>)
+    };
+
+    function addRenderItem(emp:any){
+        return (<TouchableOpacity onPress={()=>{ 
+            setScoupeForEmployee(emp.item.ID, selectedScoupeObj.ID);
+            createOneButtonAlert();
+            callback();
+            setModalEmployeesVisible(false);
+        }}><EmployeeItem Employee={emp.item}/></TouchableOpacity>) 
     };
 
     useMemo(async () => {
 
         try{
-            const response = await getScoupes();
-            setScoupeArray(response.map((_value: any)=>_value));
-            callbackDepartment();
+            const scoupeResponse = await getScoupes();
+            setScoupeArray(scoupeResponse.map((_value: any)=>_value));
             setSelectedScoupeObj({ScoupeName: "Выберите структуру..."});
+            callback();
         }
         catch{console.log("Cant get scoupes")}
     }, [mount]);
@@ -161,7 +176,7 @@ export function AddDepartmentScreen(props:any)
 
     return(
         <View>
-            <Title goBack={props.navigation.goBack} name = {"Отделы"}/>
+            <Title goBack={props.navigation.goBack} name = {"Добавление в отдел"}/>
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -180,7 +195,6 @@ export function AddDepartmentScreen(props:any)
                                                         setSelectedScoupeObj(emp.item);
                                                         if(emp.item.DepartmentID)
                                                         {
-                                                        setDepartmentsArray(emp.item.DepartmentID);
                                                         setModalScoupeVisible(false);
                                                         }}}>
                                                             
@@ -201,29 +215,49 @@ export function AddDepartmentScreen(props:any)
                 </View>
             </Modal>
 
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalEmployeesVisible}
+                onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setModalEmployeesVisible(!modalEmployeesVisible);
+                }}
+            >
+                <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                <View style={styles.flatListStyle}>
+                <FlatList data={EmployeesArray.filter(element=>{if(element.Scoupe===null) return element;})}
+                renderItem = {addRenderItem} 
+
+                keyExtractor={item => item.ID}/>
+                </View>
+                <View style={{flex:1}}>
+                <TouchableOpacity onPress={()=>{setModalEmployeesVisible(false)}}>
+                <View style={{height:60, width: 120, alignSelf: 'center', marginTop: 10}}>
+                    <Text style={{opacity:0.75, fontWeight: 'bold', fontSize: 20, alignSelf: 'center', color: 'tomato'}}>Закрыть</Text>
+                </View>
+                </TouchableOpacity>
+                </View>
+                </View>
+                </View>
+            </Modal>
+
             <View style= {styles.container}>
             
-            <View style={{width: '100%', justifyContent:'flex-start'}}>
+            <View style={{width: '100%', justifyContent:'flex-start',}}>
             <TouchableOpacity onPress={()=>setModalScoupeVisible(true)}>
-            <View style ={{marginBottom: 20,height: 50, width: "100%", justifyContent: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor:"#e5f2dc"}}>
+            <View style ={{marginBottom: 20, shadowRadius: 10 , shadowColor: 'black', shadowOpacity:1 ,shadowOffset: {width: 10, height: 10} ,height: 50, width: "100%", justifyContent: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor:"#e5f2dc"}}>
             <Text style={{opacity:0.65, fontWeight: 'bold', alignSelf: 'center'}}>{selectedScoupeObj?.ScoupeName}</Text>
             </View>
             </TouchableOpacity>
             
-            
-            <TextInput ref={(reff)=>ref=reff} value = {DepartmentName} onChangeText={setDepartmentName} textAlign= 'center' placeholder='Имя подразделения' maxLength={32} style={styles.input}/>
-            
-            <TouchableOpacity style = {{marginBottom: 20}} onPress={async ()=>{
-                addDepartmentReq()
-                callbackDepartment();
-                setDepartmentName('');
-                TextInput.State.blurTextInput(ref);
-            }}>
-                <Text style = {styles.text}>Добавить</Text>
+            <TouchableOpacity onPress={()=>{if(selectedScoupeObj?.ID)setModalEmployeesVisible(true)}} style ={{marginBottom: 20,height: 50, width: "100%", justifyContent: 'center', alignContent: 'center', alignSelf: 'center'}}>
+            <Text style = {styles.text}>Добавить</Text>
             </TouchableOpacity>
             
-            <View style = {{width: '100%', height: '74%'}}>
-            <FlatList data={DepartmentsArray} renderItem = {renderItem} keyExtractor={item => item.ID}/>
+            <View style = {{width: '100%', height: '100%', alignSelf: 'center'}}>
+            <FlatList data={EmployeesArray.filter(element=>{if(element?.Scoupe?.ScoupeName===selectedScoupeObj.ScoupeName) return element})} renderItem = {renderItem} keyExtractor={item => item?.ID}/>
             </View>
             </View>
         </View>

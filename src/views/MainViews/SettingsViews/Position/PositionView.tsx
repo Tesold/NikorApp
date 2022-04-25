@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, FlatList, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import {Picker} from '@react-native-picker/picker';
-import { AddPositionNameTitle } from "../titles/addPositionNameTitle";
 import { addPosition, getAllPositions, getPositionNamePosition } from "../../../../requests/MainTabRequests/SettingsRequests/Position";
 import { PositionItem, PositionItemFull } from "./PositionItem";
 import { getScoupesWithAllData } from "../../../../requests/MainTabRequests/SettingsRequests/Scoupe";
@@ -9,6 +8,7 @@ import { produceWithPatches } from "immer";
 import { ScoupeItem } from "../Scoupe/ScoupeItem";
 import { DepartmentItem } from "../Department/DepartmentItem";
 import { PositionNameItem } from "../PositionName/PositionNameItem";
+import { Title } from "../titles/Title";
 
 const styles = StyleSheet.create({
     container: {
@@ -182,7 +182,7 @@ export function AddPositionScreen(props:any)
 
     return(
         <View>
-            
+            <Title goBack={props.navigation.goBack} name = {"Должности"}/>
             <Modal
                 animationType="fade"
                 transparent={true}

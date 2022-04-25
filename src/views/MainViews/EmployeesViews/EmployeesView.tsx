@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, TouchableOpacity, View , Text} from 'react-native';
 import { EmployeeTitle } from './EmployeeTitle';
-import { getEmployeers } from '../../../requests/MainTabRequests/EmployeersRequests/EmployeersRequests';
+import { getEmployees } from '../../../requests/MainTabRequests/EmployeersRequests/EmployeesRequests';
 import { EmployeeItem, EmployeeItemFull } from './Items/EmployeeItem';
 
 
@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#F7FFF2',
       alignItems: 'center',
       justifyContent: 'center',
+      
     },
   });
 
@@ -23,7 +24,7 @@ export function EmployeesScreen(props:any)
 
     async function fillData()
     {
-        try{setData(await getEmployeers());}
+        try{setData(await getEmployees());}
         catch{console.log("Cant get employeers")}
     }
 
@@ -50,8 +51,8 @@ export function EmployeesScreen(props:any)
         <View style={styles.container}>
             <EmployeeTitle/>
 
-            <SafeAreaView style={styles.container}>
-                <FlatList data={data} renderItem={renderItem} extraData={selectedId} keyExtractor={item => item.ID} />
+            <SafeAreaView style={{...styles.container, width:'100%', alignSelf: 'center'}}>
+                <FlatList style={{width:'100%', alignSelf: 'center'}} data={data} renderItem={renderItem} extraData={selectedId} keyExtractor={item => item.ID} />
                 <TouchableOpacity onPress={()=>fillData()}>
                     <Text style = {{opacity: 0.65, paddingVertical: 15, fontSize:17, letterSpacing: 1, textAlign:'center',  fontWeight: 'bold'}}>Обновить</Text>
                 </TouchableOpacity>

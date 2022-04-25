@@ -1,13 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { Text, View, StyleSheet, Dimensions, Image } from 'react-native';
-import { getHeaderTitle } from '@react-navigation/elements';
 import { getUser } from '../../../store/authToken';
 
 const itemHeight = (Dimensions.get('window').height)
 
 const styles = StyleSheet.create({
     container: {
-      //flex: 1,
       flexDirection: "row",
       width: '100%',
       height: '10%',
@@ -22,8 +20,6 @@ const styles = StyleSheet.create({
     logo:{
       width: '100%',
       height: '100%',
-      //alignSelf: 'baseline',
-      //relative: 'left'
       flex: 1
     },
     AvatarPos:{
